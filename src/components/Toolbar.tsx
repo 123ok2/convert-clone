@@ -9,9 +9,9 @@ import {
   Upload,
   Calculator,
   Copy,
-  Printer,
   FileDown,
-  Trash2
+  Trash2,
+  Puzzle
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -20,7 +20,6 @@ interface ToolbarProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   onCopyFormatted: () => Promise<void>;
-  onPrint: () => Promise<void>;
   onExportWord: () => Promise<void>;
   onClear: () => void;
 }
@@ -31,7 +30,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onFileUpload,
   fileInputRef,
   onCopyFormatted,
-  onPrint,
   onExportWord,
   onClear
 }) => {
@@ -118,7 +116,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       </div>
 
       {/* Các hành động chính ở góc bên phải */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
+        <a
+          href="https://drive.google.com/file/d/1mmKCkFH2Z7ibO2CEw2jytJNegND_wmzz/view?usp=drive_link"
+          target="_blank"
+          rel="noopener noreferrer"
+className="flex items-center shrink-0 gap-1.5 px-3 py-1.5 text-[11px] font-extrabold rounded-xl cursor-pointer transition-all duration-200 group hover:scale-[1.02] active:scale-95 text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-500 shadow-md shadow-fuchsia-500/20 hover:from-purple-500 hover:via-fuchsia-500 hover:to-pink-400 hover:shadow-lg hover:shadow-fuchsia-500/30"          title="Tải & Cài đặt Extension Tiện ích Chụp ảnh công thức"
+        >
+          <Puzzle size={14} className="stroke-[2.5] group-hover:rotate-12 transition-transform duration-200" />
+          <span> Cài Extension</span>
+        </a>
+
+        <div className="h-4 w-[1px] bg-slate-200/80 hidden sm:block"></div>
+
         <button
           type="button"
           onClick={onCopyFormatted}
@@ -126,14 +136,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           title="Sao chép chuẩn Word"
         >
           <Copy size={19} className="stroke-[2.0]" />
-        </button>
-        <button
-          type="button"
-          onClick={onPrint}
-          className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-all cursor-pointer active:scale-95"
-          title="In tài liệu"
-        >
-          <Printer size={19} className="stroke-[2.0]" />
         </button>
         <button
           type="button"
