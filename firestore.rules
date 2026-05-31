@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Kiểm tra quyền Admin
+    function isAdmin() {
+      return request.auth != null && (request.auth.token.email == "duyconghanh2017@gmail.com" || request.auth.token.email == "rongtiendatto@gmail.com");
+    }
+
+    // Kiểm tra người dùng đã đăng nhập
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // --- CẤU HÌNH QUYỀN TRUY CẬP ---
+
+    // 1. Bộ sưu tập 'statistics' hoàn toàn công khai cho tất cả mọi người (đọc/ghi tự do không cần đăng nhập)
+    match /statistics/{document=**} {
+      allow read, write: if true;
+    }
+
+    // 2. Sử dụng wildcard động cho tất cả bộ sưu tập còn lại để hỗ trợ tên tiếng Việt có dấu trong Firestore Security Rules
+    match /{collectionName}/{docId} {
+      
+      // Bộ sưu tập 'users' & 'người dùng': Cho phép chủ sở hữu (uid chính là docId) hoặc Admin truy cập
+      allow read, write: if (collectionName == "users" || collectionName == "người dùng")
+                          && (isAdmin() || (isSignedIn() && request.auth.uid == docId));
+      allow list: if (collectionName == "users" || collectionName == "người dùng") && isAdmin();
+      
+      // Bộ sưu tập 'guests' & 'khách': Cho phép bất kỳ người dùng đã đăng nhập (vì docId là fingerprint thiết bị) hoặc Admin truy cập
+      allow read, write: if (collectionName == "guests" || collectionName == "khách")
+                          && (isAdmin() || isSignedIn());
+      allow list: if (collectionName == "guests" || collectionName == "khách") && isAdmin();
+      
+      // Bộ sưu tập 'devices' & 'thiết bị': Cho phép bất kỳ người dùng đã đăng nhập (vì docId là fingerprint thiết bị) hoặc Admin truy cập
+      allow read, write: if (collectionName == "devices" || collectionName == "thiết bị") && isSignedIn();
+      allow list: if (collectionName == "devices" || collectionName == "thiết bị") && isAdmin();
+    }
+  }
+}
